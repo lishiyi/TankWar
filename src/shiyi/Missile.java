@@ -1,5 +1,7 @@
 package shiyi;
 import java.awt.*;
+import java.util.ArrayList;
+
 import shiyi.Tank.Direction;
 
 public class Missile {
@@ -12,6 +14,7 @@ public class Missile {
 	
 	int x, y;
 	Tank.Direction dir;
+	private boolean good;
 	
 	private boolean live = true;
 	private TankClient tc;
@@ -27,8 +30,9 @@ public class Missile {
 		this.dir = dir;
 	}
 	
-	public Missile(int x, int y, Direction dir, TankClient tc){
+	public Missile(int x, int y, boolean good, Direction dir, TankClient tc){
 		this(x, y, dir);
+		this.good = good;
 		this.tc = tc;
 	}
 	
@@ -86,12 +90,22 @@ public class Missile {
 	}
 	
 	public boolean hitTank(Tank t){
-		if(this.getRect().intersects(t.getRect()) && t.isLive()) {
+		if(this.live && this.getRect().intersects(t.getRect()) && t.isLive() && this.good != t.isGood()) {
 			t.setLive(false);
 			this.live = false;
 			Explode e = new Explode(x, y, tc);
 			tc.explodes.add(e);
 			return true;
+		}
+		return false;
+	}
+	
+	public boolean hitTanks(ArrayList<Tank> tanks){
+		
+		for(int i = 0; i < tanks.size(); i++){
+			if(hitTank(tanks.get(i))){
+				return true;
+			}
 		}
 		return false;
 	}

@@ -80,4 +80,20 @@ public class Missile {
 			tc.missiles.remove(this);
 		}
 	}
+	
+	public Rectangle getRect(){
+		return new Rectangle(x, y, WIDTH, HEIGHT);
+	}
+	
+	public boolean hitTank(Tank t){
+		if(this.getRect().intersects(t.getRect()) && t.isLive()) {
+			t.setLive(false);
+			this.live = false;
+			Explode e = new Explode(x, y, tc);
+			tc.explodes.add(e);
+			return true;
+		}
+		return false;
+	}
 }
+

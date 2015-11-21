@@ -15,6 +15,8 @@ public class Tank {
 	
 	private boolean good;
 	
+	private boolean live = true;
+	
 	private int x, y;
 	
 	private boolean bL = false, bU = false, bR = false, bD = false;
@@ -40,7 +42,7 @@ public class Tank {
 		if(good) g.setColor(Color.red);
 		else g.setColor(Color.blue);
 		
-		g.fillOval(x, y, WIDTH, HEIGHT);
+		if(live) g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
 		
 		switch(ptDir){
@@ -180,5 +182,17 @@ public class Tank {
 		Missile m = new Missile(x, y, ptDir, this.tc);
 		tc.missiles.add(m);
 		return m;
+	}
+	
+	public Rectangle getRect(){
+		return new Rectangle(x, y, WIDTH, HEIGHT);
+	}
+
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
 	}
 }

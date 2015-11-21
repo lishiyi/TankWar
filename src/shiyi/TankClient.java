@@ -2,21 +2,30 @@ package shiyi;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class TankClient extends Frame{
 	
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HEIGHT = 600;
 	
-	Tank myTank = new Tank(50, 50);
+	Tank myTank = new Tank(50, 50, true, this);
+	Tank enemyTank = new Tank(100, 100, false, this);
+	ArrayList<Missile> missiles = new ArrayList();
 	
 	Image offScreenImage = null;
 	
 	
 	@Override
 	public void paint(Graphics g) {
-		
+		g.drawString("missiles count:" + missiles.size(), 10, 60);
+		for(int i = 0; i < missiles.size(); i++){
+			Missile m = missiles.get(i);
+			//if(!m.isLive()) missiles.remove(m);
+			m.draw(g);
+		}
 		myTank.draw(g);
+		enemyTank.draw(g);
 	}
 	
 	public void update(Graphics g){
@@ -76,10 +85,14 @@ public class TankClient extends Frame{
 	}
 	
 	private class KeyMonitor extends KeyAdapter{
-		
+		@Override
 		public void keyPressed(KeyEvent e){
 			
 			myTank.keyPressed(e);
+		}
+		@Override
+		public void keyReleased(KeyEvent e){
+			myTank.keyReleased(e);
 		}
 	}
 }

@@ -4,13 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import shiyi.Tank.Direction;
+
 public class TankClient extends Frame{
 	
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HEIGHT = 600;
 	
-	Tank myTank = new Tank(50, 50, true, Tank.Direction.STOP, this);
-	//Tank enemyTank = new Tank(100, 100, false, this);
+	Tank myTank = new Tank(200, 150, true, Tank.Direction.STOP, this);
 	Wall w1 = new Wall(100, 200, 20, 150, this);
 	Wall w2 = new Wall(300, 100, 300, 20, this);
 	
@@ -19,19 +20,27 @@ public class TankClient extends Frame{
 	ArrayList<Tank> tanks = new ArrayList();
 	Image offScreenImage = null;
 	
-	
+	Blood b = new Blood();
 	
 	@Override
 	public void paint(Graphics g) {
 		g.drawString("missiles count:" + missiles.size(), 10, 50);
 		g.drawString("explodes count:" + explodes.size(), 10, 70);
 		g.drawString("tanks    count:" + tanks.size(), 10, 90);
+		g.drawString("tanks     life:" + myTank.getLife(), 10, 110);
+		
+		if(tanks.size() <= 0){
+			for(int i = 0; i < 5; i++){	
+				tanks.add(new Tank(50 + 40 * (i + 1), 50, false, Tank.Direction.D, this));
+			}
+		}
+		
 		for(int i = 0; i < missiles.size(); i++){
 			Missile m = missiles.get(i);
 			m.hitTanks(tanks);
 			m.hitTank(myTank);
-			//m.hitWall(w1);
-			//m.hitWall(w2);
+			m.hitWall(w1);
+			m.hitWall(w2);
 			m.draw(g);
 		}
 		for(int i = 0; i < explodes.size(); i++){
@@ -46,9 +55,10 @@ public class TankClient extends Frame{
 			t.draw(g);
 		}
 		myTank.draw(g);
+		myTank.eat(b);
 		w1.draw(g);
 		w2.draw(g);
-		//enemyTank.draw(g);
+		b.draw(g);
 	}
 	
 	public void update(Graphics g){
@@ -123,4 +133,5 @@ public class TankClient extends Frame{
 			myTank.keyReleased(e);
 		}
 	}
+	
 }

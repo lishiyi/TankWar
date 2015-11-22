@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
+import shiyi.Tank.Direction;
+
 public class Tank {
 	
 	public static final int XSPEED = 5;
@@ -13,11 +15,21 @@ public class Tank {
 	public static final int HEIGHT = 30;
 	
 	TankClient tc;
+	private BloodBar bb = new BloodBar();
 	
 	private boolean good;
 	
 	private boolean live = true;
 	
+	private int life = 100;
+	
+	public int getLife() {
+		return life;
+	}
+
+	public void setLife(int life) {
+		this.life = life;
+	}
 	private int x, y;
 	private int oldX, oldY;
 	
@@ -34,6 +46,8 @@ public class Tank {
 	public Tank(int x, int y, boolean good) {
 		this.x = x;
 		this.y = y;
+		this.oldX = x;
+		this.oldY = y;
 		this.setGood(good);
 	}
 	
@@ -57,6 +71,8 @@ public class Tank {
 		
 		g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
+		
+		if(good) bb.draw(g);
 		
 		switch(ptDir){
 		case L:
@@ -89,6 +105,10 @@ public class Tank {
 	}
 	
 	void move(){
+		
+		this.oldX = x;
+		this.oldY = y;
+		
 		switch(dir){
 		case L:
 			x -= XSPEED;
@@ -140,7 +160,7 @@ public class Tank {
 			}
 			step--;
 			
-			if(r.nextInt(40) > 38)
+			if(r.nextInt(25) > 23)
 				this.fire();
 		}
 	}
@@ -149,7 +169,12 @@ public class Tank {
 		
 		int key = e.getKeyCode();
 		switch(key){
-
+		case KeyEvent.VK_F2:
+			if(!this.live){
+				this.live = true;
+				this.life = 100;
+			}
+			break;
 		case KeyEvent.VK_LEFT:
 			bL = true;
 			break;
@@ -197,6 +222,9 @@ public class Tank {
 		case KeyEvent.VK_DOWN:
 			bD = false;
 			break;
+		case KeyEvent.VK_A:
+			superFire();
+			break;
 		}
 		locateDirection();
 	}
@@ -207,6 +235,16 @@ public class Tank {
 		int x = this.x + Tank.WIDTH / 2 - Missile.WIDTH / 2;
 		int y = this.y + Tank.HEIGHT / 2 - Missile.HEIGHT / 2;
 		Missile m = new Missile(x, y, isGood(), ptDir, this.tc);
+		tc.missiles.add(m);
+		return m;
+	}
+	
+	public Missile fire(Direction dir){
+		if(!live) return null;
+		
+		int x = this.x + Tank.WIDTH / 2 - Missile.WIDTH / 2;
+		int y = this.y + Tank.HEIGHT / 2 - Missile.HEIGHT / 2;
+		Missile m = new Missile(x, y, isGood(), dir, this.tc);
 		tc.missiles.add(m);
 		return m;
 	}
@@ -257,5 +295,34 @@ public class Tank {
 
 	public void setGood(boolean good) {
 		this.good = good;
+	}
+	//TODO
+	private void superFire(){
+		Direction[] dirs = Direction.values();
+		for(int i = 0; i < 8; i++){
+			fire(dirs[i]);
+		}
+	}
+	
+	private class BloodBar{
+		public void draw(Graphics g){
+			Color c = g.getColor();
+			if(life > 50) g.setColor(Color.green);
+			else g.setColor(Color.yellow);
+			g.drawRect(x, y - 5, WIDTH, 5);
+			int w = WIDTH * life / 100;
+			
+			g.fillRect(x, y - 5, w, 5);
+			g.setColor(c);
+		}
+	}
+	
+	public boolean eat(Blood b){
+		if(this.live && b.isLive() && this.getRect().intersects(b.getRect())){
+			this.life = 100;
+			b.setLive(false);
+			return true;
+		}
+		return false;
 	}
 }

@@ -38,6 +38,10 @@ public class Missile {
 	
 	public void draw(Graphics g){
 		
+		if(!live){
+			tc.missiles.remove(this);
+			return;
+		}
 		Color c = g.getColor();
 		g.setColor(Color.black);
 		g.fillOval(x, y, WIDTH, HEIGHT);
@@ -91,7 +95,13 @@ public class Missile {
 	
 	public boolean hitTank(Tank t){
 		if(this.live && this.getRect().intersects(t.getRect()) && t.isLive() && this.good != t.isGood()) {
-			t.setLive(false);
+			if(t.isGood()){
+				t.setLife(t.getLife() - 20);
+				if(t.getLife() <= 0) t.setLive(false);
+			}
+			else{
+				t.setLive(false);
+			}
 			this.live = false;
 			Explode e = new Explode(x, y, tc);
 			tc.explodes.add(e);
@@ -106,6 +116,14 @@ public class Missile {
 			if(hitTank(tanks.get(i))){
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	public boolean hitWall(Wall w){
+		if(this.live && this.getRect().intersects(w.getRect())){
+			this.live = false;
+			return true;
 		}
 		return false;
 	}

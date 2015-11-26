@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class Blood {
 	
-	int x, y, w, h;
+	int x, y;
 	TankClient tc;
 	
 	int step = 0;
@@ -18,24 +18,30 @@ public class Blood {
 	}
 
 	private int[][] pos = {
-			{350, 300}, {360, 300}, {375, 275}, {400, 200},
-			{360, 270}, {365, 290}, {340, 280}
+			{350, 500}, {350, 500},{350, 500}, {350, 500},{350, 500}, {350, 500},{350, 500}, {350, 500},{350, 500}, {350, 500},
+			{500, 500}, {500, 500},{500, 500}, {500, 500},{500, 500}, {500, 500},{500, 500}, {500, 500}, {500, 500}, {500, 500}
 	};
 	
+	private static Toolkit tk = Toolkit.getDefaultToolkit();
+	
+	private static Image img = tk.getImage(Blood.class.getClassLoader().getResource("image/mintank.png"));
+
+	
 	public Blood(){
-		x = pos[0][0];
-		y  = pos[0][1];
-		w = h = 15;
+		x = 200;
+		y  = 200;
+		//w = h = 20;
 	}
 	
 	public void draw(Graphics g){
 		
 		if(!live) return;
-		Color c = g.getColor();
-		g.setColor(Color.MAGENTA);
-		g.fillRect(x, y, w, h);
-		g.setColor(c);
-		move();
+		//Color c = g.getColor();
+		//g.setColor(Color.MAGENTA);
+		//g.fillOval(x, y, w, h);
+		//g.setColor(c);
+		g.drawImage(img, x, y, null);
+		//move();
 	}
 	
 	private void move(){
@@ -48,6 +54,6 @@ public class Blood {
 	}
 	
 	public Rectangle getRect(){
-		return new Rectangle(x, y, w, h);
+		return new Rectangle(x, y, 32, 28);
 	}
 }

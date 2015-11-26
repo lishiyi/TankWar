@@ -2,8 +2,6 @@ package shiyi;
 import java.awt.*;
 import java.util.ArrayList;
 
-import shiyi.Tank.Direction;
-
 public class Missile {
 	
 	public static final int XSPEED = 10;
@@ -13,7 +11,7 @@ public class Missile {
 	public static final int HEIGHT = 10;
 	
 	int x, y;
-	Tank.Direction dir;
+	Direction dir;
 	private boolean good;
 	
 	private boolean live = true;
@@ -22,6 +20,10 @@ public class Missile {
 	public boolean isLive() {
 		return live;
 	}
+	
+    private static Toolkit tk = Toolkit.getDefaultToolkit();
+	private static Image img = tk.getImage(Blood.class.getClassLoader().getResource("image/bullet.png"));
+
 
 	public Missile(int x, int y, Direction dir) {
 		super();
@@ -42,10 +44,15 @@ public class Missile {
 			tc.missiles.remove(this);
 			return;
 		}
-		Color c = g.getColor();
-		g.setColor(Color.black);
-		g.fillOval(x, y, WIDTH, HEIGHT);
-		g.setColor(c);
+		
+		if(good) {
+			Color c = g.getColor();
+			g.setColor(Color.gray);
+			g.fillOval(x, y, WIDTH, HEIGHT);
+			g.setColor(c);
+		}
+		else g.drawImage(img, x, y, 10, 10, null);
+		
 		
 		move();
 	}
@@ -101,6 +108,7 @@ public class Missile {
 			}
 			else{
 				t.setLive(false);
+				tc.score += 100;
 			}
 			this.live = false;
 			Explode e = new Explode(x, y, tc);

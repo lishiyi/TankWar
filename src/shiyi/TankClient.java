@@ -10,6 +10,7 @@ public class TankClient extends Frame{
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HEIGHT = 600;
 	public int score = 0;
+	public int waves = Integer.parseInt(PropertyMgr.getProperty("waves"));
 	
 	Tank myTank = new Tank(300, 150, true, Direction.STOP, this);
 	Wall[] walls = {
@@ -37,11 +38,36 @@ public class TankClient extends Frame{
 		
 		int reProduceTankCount = Integer.parseInt(PropertyMgr.getProperty("reProduceTankCount")); 
 		if(tanks.size() <= 0){
-			for(int i = 0; i < reProduceTankCount; i++){	
-				tanks.add(new Tank(50 + 60 * (i + 1), 50, false, Direction.D, this));
-				tanks.add(new Tank(50 + 740 - 60 * (i + 1), 50, false, Direction.D, this));
-				tanks.add(new Tank(50 + 60 * (i + 1), 500, false, Direction.D, this));
-				tanks.add(new Tank(50 + 740 - 60 * (i + 1), 500, false, Direction.D, this));
+			if(waves > 1){
+				for(int i = 0; i < reProduceTankCount; i++){	
+					tanks.add(new Tank(50 + 60 * (i + 1), 50, false, Direction.D, this));
+					tanks.add(new Tank(50 + 740 - 60 * (i + 1), 50, false, Direction.D, this));
+					tanks.add(new Tank(50 + 60 * (i + 1), 500, false, Direction.D, this));
+					tanks.add(new Tank(50 + 740 - 60 * (i + 1), 500, false, Direction.D, this));
+				}
+				waves--;
+			}
+			else if(waves == 1){
+				for(int i = 0; i < reProduceTankCount + 2; i++){	
+					tanks.add(new Tank(50 + 60 * (i + 1), 50, false, Direction.D, this));
+					tanks.add(new Tank(50 + 740 - 60 * (i + 1), 50, false, Direction.D, this));
+					tanks.add(new Tank(50 + 60 * (i + 1), 500, false, Direction.D, this));
+					tanks.add(new Tank(50 + 740 - 60 * (i + 1), 500, false, Direction.D, this));
+				}
+				tanks.add(new Tank(50 , 180, false, Direction.D, this));
+				tanks.add(new Tank(50 , 240, false, Direction.D, this));
+				tanks.add(new Tank(50 , 300, false, Direction.D, this));
+				tanks.add(new Tank(50 , 360, false, Direction.D, this));
+				tanks.add(new Tank(50 , 420, false, Direction.D, this));
+				tanks.add(new Tank(750 , 180, false, Direction.D, this));
+				tanks.add(new Tank(750 , 240, false, Direction.D, this));
+				tanks.add(new Tank(750 , 300, false, Direction.D, this));
+				tanks.add(new Tank(750 , 360, false, Direction.D, this));
+				tanks.add(new Tank(750 , 420, false, Direction.D, this));
+				waves--;
+			}
+			else{
+				g.drawString("You win! Your score is " + this.score , 340, 300);
 			}
 		}
 		//tanks.add(new BossTank(150, 150, false, Direction.D, this));
@@ -75,8 +101,11 @@ public class TankClient extends Frame{
 		for(Wall w : walls){
 			w.draw(g);
 		}
-		
 		b.draw(g);
+		for(Wall w : walls){
+			b.collidesWithWall(w);
+		}
+		b.collidesWithWall(river);
 		
 		for(int i = 0; i < missiles.size(); i++){
 			Missile m = missiles.get(i);
@@ -89,8 +118,16 @@ public class TankClient extends Frame{
 		}
 		
 		g.drawString("Score: " + this.score, 10, 50);
-		g.drawString("Life:  " +  myTank.getLife(), 10, 70);
-		g.drawString("Enemy Tanks: " + tanks.size(), 10, 90);
+		//g.drawString("Life:  " +  myTank.getLife(), 10, 70);
+		g.drawString("Enemy Tanks: " + tanks.size(), 10, 70);
+		g.drawString("Waves Left:  " + waves, 10, 90);
+		
+		
+		//g.drawString("SFire: A", 10, 590);
+		g.drawString("Fire : Ctrl", 10, 590);
+		if(!myTank.isLive()){
+			g.drawString("Press F2 to continue", 340, 300);
+		}
 	}
 	
 	public void update(Graphics g){

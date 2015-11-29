@@ -34,7 +34,7 @@ public class Tank {
 	protected int oldX;
 	protected int oldY;
 	
-	protected static Random r = new Random();
+	private static Random r = new Random();
 	
 	private boolean bL = false, bU = false, bR = false, bD = false;
 
@@ -210,6 +210,12 @@ public class Tank {
 			if(!this.live){
 				this.live = true;
 				this.life = 100;
+				if(tc.score > 2000){
+					tc.score -= 2000;
+				}
+				else{
+					tc.score = 0;
+				}
 			}
 			break;
 		case KeyEvent.VK_LEFT:
@@ -357,7 +363,15 @@ public class Tank {
 	
 	public boolean eat(Blood b){
 		if(this.live && b.isLive() && this.getRect().intersects(b.getRect())){
-			this.life = 100;
+			if(!b.isStar()){
+				this.life = 100;
+				b.setStar(true);
+		    }
+			else{
+				if(this.life <= 80) this.life += 20;
+				b.setStar(false);
+			}
+			tc.score += 500;
 			b.setLive(false);
 			return true;
 		}
